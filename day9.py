@@ -4,6 +4,7 @@ data = [[int(c) for c in line] for line in lines]
 
 
 def get_adj(row, col, data):
+    # Get all adjacent points in the cave grid
     adj = {}
     if row > 0:
         adj[(row - 1, col)] = data[row - 1][col]
@@ -16,8 +17,11 @@ def get_adj(row, col, data):
     return adj
 
 
-def fill_basin(visited, low, data):
-    adj = [point for point, val in get_adj(*low, data).items() if point not in visited and val != 9]
+def fill_basin(visited, cur_point, data):
+    # Recursive function to find all the points in each basin.
+    # print(f'Current point: {cur_point}')
+    # print(f'Visited list: {visited}')
+    adj = [point for point, val in get_adj(*cur_point, data).items() if point not in visited and val != 9]
     visited.extend(adj)
     for point in adj:
         visited = fill_basin(visited, point, data)
@@ -37,7 +41,7 @@ submit(low_count, part='a')
 
 basin = []
 for low in low_points:
-    basin += [len(fill_basin([], low, data))]
+    basin += [len(fill_basin([low], low, data))]
 
 basin.sort()
 prod = 1
