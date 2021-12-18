@@ -12,21 +12,30 @@ def parse(input):
     return [int(x) for x in re.findall(re_string, input)[0]]
 
 
-def find_possible_velocities(low, high, axis, peak_y_velocity=0):
+def find_possible_velocities(low, high, axis):
+    """ Find all possible velocities over the given axis
+
+    :param low:  start of target area along axis
+    :param high: end of target area along axis
+    :param axis: the axis to analyze. Possible values 'x' or 'y'
+    :return: list of possible initial velocities
+    """
+    # Possible x velocities are in [1, x_high]
+    # Possible y velocities are in [y_low, -y_low) (assuming y_low is a negative value)
     possible_velocities = []
-    range_start = 0 if axis == 'x' else low
-    range_stop = high + 1 if axis == 'x' else peak_y_velocity + 1
+    range_start = 1 if axis == 'x' else low
+    range_stop = high + 1 if axis == 'x' else -low
     for velocity in range(range_start, range_stop):
         cur_pos = 0
         cur_vel = velocity
-        condition_checker = cur_vel if axis == 'x' else cur_vel
+        condition_checker = cur_vel if axis == 'x' else cur_pos
         while condition_checker >= range_start:
             cur_pos += cur_vel
             if low <= cur_pos <= high:
                 possible_velocities += [velocity]
                 break
             cur_vel -= 1
-            condition_checker = cur_vel if axis == 'x' else cur_vel
+            condition_checker = cur_vel if axis == 'x' else cur_pos
     return possible_velocities
 
 
@@ -61,7 +70,7 @@ def solve(input, should_submit=False):
     possible_x_velocities = find_possible_velocities(x_low, x_high, 'x')
     # print('Possible x velocities: ', possible_x_velocities)
 
-    possible_y_velocities = find_possible_velocities(y_low, y_high, 'y', y_velocity)
+    possible_y_velocities = find_possible_velocities(y_low, y_high, 'y')
     # print('Possible y velocities: ', possible_y_velocities)
 
     possible_velocities = set()
