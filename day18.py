@@ -1,5 +1,26 @@
 from aocd import submit, lines
 import re
+import json
+
+
+def parse(input):
+    for snail_number in input:
+        print(snail_number)
+        snail_number = snail_number.replace('[', '\[')
+        snail_number = snail_number.replace(']', '\]')
+        print(snail_number)
+        json_snail = f'\"{{\\\"number\\\": {snail_number}}}\"'
+        snail_number = json.loads(snail_number)
+        print(snail_number)
+    #     idx_closing_bracket = snail_number.find(']')
+    #     while idx_closing_bracket >= 0:
+    #         idx_matching_open_bracket = snail_number.rfind('[', 0, idx_closing_bracket)
+    #         left, right = re.findall('\[(\d+),(\d+)\]',
+    #                                  snail_number[idx_matching_open_bracket:idx_closing_bracket + 1])[0]
+    #         list_num = [int(left), int(right)]
+    #         snail_number = replace_number(snail_number, magnitude, idx_matching_open_bracket, idx_closing_bracket)
+    #         idx_closing_bracket = snail_number.find(']')
+    #     return int(snail_number)
 
 
 def find_explode_target(snail_number, start, direction):
@@ -164,4 +185,6 @@ example2_magnitude = 3488
 # print(split_snail_number(split_snail_number('[[[[0,7],4],[15,[0,13]]],[1,1]]')))
 # solve(['[[[[4,3],4],4],[7,[[8,4],9]]]', '[1,1]'])
 # print(get_snail_magnitude('[[[[0,7],4],[[7,8],[6,0]]],[8,1]]'))
-solve(lines, True)
+# solve(lines, True)
+
+parse([example2_sum])
