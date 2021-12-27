@@ -56,25 +56,30 @@ def solve_b(input, should_submit=False):
                              for die_1 in range(1, 4)
                              for die_2 in range(1, 4)
                              for die_3 in range(1, 4)])
+    print(possible_steps)
 
-    # @lru_cache()
-    def execute_turn(player1, player2, cur_player, win_count):
-        # player_data = [[pos, score], [pos, score]]
-        print(f'PLayer data: {player1}, {player2}')
-        print(f'Cur player: {cur_player}')
-        print(f'win_count: {win_count}')
-        for steps, instance_count in possible_steps.items():
-            player_data = player2 if cur_player else player1
-            new_position = (player_data[0] + steps) % 10
-            player_data[cur_player]
-            # player_data[cur_player][0] = (player_data[cur_player][0] + steps) % 10
-            # player_data[cur_player][1] += player_data[cur_player][0] + 1
-            if player_data[cur_player][1] >= 21:
-                win_count[cur_player] += instance_count * (win_count[cur_player] + 1)
-            win_count = execute_turn(player_data, 1 - cur_player, win_count)
+    @lru_cache(maxsize=None)
+    def execute_turn(player_data, cur_player):
+        win_count = [0, 0]
+        for steps, num_occurrences in possible_steps.items():
+            new_position = (player_data[2 * cur_player] + steps) % 10
+            new_score = player_data[2 * cur_player + 1] + new_position + 1
+            if new_score >= 21:
+                win_count[cur_player] += num_occurrences
+            else:
+                if cur_player == 0:
+                    new_player_data = (new_position, new_score, player_data[2], player_data[3])
+                else:
+                    new_player_data = (player_data[0], player_data[1], new_position, new_score)
+                new_wins = execute_turn(new_player_data, 1 - cur_player)
+                win_count = [win_count[idx] + num_occurrences * new_count for idx, new_count in enumerate(new_wins)]
         return win_count
 
-    print(execute_turn(((current_position[0], 0), (current_position[1], 0)), 0, [0, 0]))
+    number_of_wins = execute_turn((current_position[0], 0, current_position[1], 0), 0)
+    print(f'The number of wins for player 1: {number_of_wins[0]}, the number of wins for player 2: {number_of_wins[1]}')
+    if should_submit:
+        submit(number_of_wins[0], part='b')
 
 
-solve_b(lines)
+# solve_b(example1)
+solve_b(lines, True)
